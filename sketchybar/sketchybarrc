@@ -1,0 +1,475 @@
+#!/bin/zsh
+
+#region SETUP #################################################################
+
+PLUGIN_DIR="/Users/eric/.config/sketchybar/plugins"
+UTIL_DIR="/Users/eric/.config/sketchybar/util"
+#endregion
+#region CONFIG ################################################################
+
+bar_color=0xFF451093
+popup_color=0xFF451093
+border_color=0xFF876BC4
+highlight_color=0xFF7FE5F0
+label_color=0xFFFFFFFF
+icon_color=0xFFFFFFFF
+
+shadow_angle=30
+shadow_distance=2
+shadow_color=0x3FFFFFFF
+
+side_padding=7
+between_padding=2
+
+background_side_padding=2
+background_height=22
+background_border_width=2
+background_corner_radius=2
+
+icon_font="Liga SFMono Nerd Font"
+label_font="SF Mono"
+
+config=(
+    --bar
+        height=24
+        margin=0
+        y_offset=-24
+        position=top
+        padding_left=5
+        padding_right=5
+        blur_radius=100
+        corner_radius=0
+        topmost=off
+        hidden=off
+        color=$bar_color
+        image.drawing=on
+        font_smoothing=on
+        shadow=off
+
+    --default
+        icon.font="$icon_font:Regular:14"
+        icon.color=$icon_color
+        icon.highlight_color=$highlight_color
+        icon.padding_left=$side_padding
+        icon.padding_right=$between_padding
+        icon.shadow.angle=$shadow_angle
+        icon.shadow.distance=$shadow_distance
+        icon.shadow.color=$shadow_color
+        icon.shadow.drawing=off
+
+        label.font="$label_font:Regular:12"
+        label.color=$label_color
+        label.highlight_color=$highlight_color
+        label.padding_left=$between_padding
+        label.padding_right=$side_padding
+        label.shadow.angle=$shadow_angle
+        label.shadow.distance=$shadow_distance
+        label.shadow.color=$shadow_color
+        label.shadow.drawing=off
+
+        background.padding_left=$background_side_padding
+        background.padding_right=$background_side_padding
+        background.height=$background_height
+        background.color=0x00000000 # $bar_color
+        background.border_color=$border_color
+        background.border_width=$background_border_width
+        background.drawing=off
+        background.corner_radius=$background_corner_radius
+
+        popup.background.padding_left=$background_side_padding
+        popup.background.padding_right=$background_side_padding
+        popup.background.height=$background_height
+        popup.background.color=$popup_color
+        popup.background.border_color=$border_color
+        popup.background.border_width=$background_border_width
+        popup.background.drawing=on
+        popup.background.corner_radius=$background_corner_radius
+
+        popup.align=left
+        popup.horizontal=off
+        popup.drawing=off
+        popup.y_offset=1
+
+        drawing=on
+        updates=on
+        lazy=off
+)
+
+#endregion
+#region EVENTS ################################################################
+
+events=(
+    --add event application_launched
+    --add event application_terminated
+    --add event application_front_switched
+    --add event application_activated
+    --add event application_deactivated
+    --add event application_visible
+    --add event application_hidden
+    --add event window_created
+    --add event window_destroyed
+    --add event window_focused
+    --add event window_moved
+    --add event window_resized
+    --add event window_minimized
+    --add event window_deminimized
+    --add event window_title_changed
+    --add event space_changed
+    --add event display_added
+    --add event display_removed
+    --add event display_moved
+    --add event display_resized
+    --add event display_changed
+    --add event mission_control_enter
+    --add event mission_control_exit
+    --add event system_woke
+    --add event yabai_command_run
+    --add event spotify_changed com.spotify.client.PlaybackStateChanged
+)
+
+#endregion
+#region TEMPLATES #############################################################
+
+templates=(
+    --add space space_template left
+    --set space_template
+        associated_display=1
+        script="$PLUGIN_DIR/space.fish"
+        click_script="$PLUGIN_DIR/space.click.fish"
+        icon.padding_left=1
+        icon.padding_right=1
+        label.padding_left=0
+        label.padding_right=0
+        background.padding_left=0
+        background.padding_right=0
+
+    --add item icon_template left
+    --set icon_template
+        icon.padding_left=7
+        icon.padding_right=7
+        label.padding_left=0
+        label.padding_right=0
+
+    --add item label_template left
+    --set label_template
+        icon.padding_left=0
+        icon.padding_right=0
+        label.padding_left=7
+        label.padding_right=7
+
+    --add item popup_icon_template left
+    --set popup_icon_template
+        icon.padding_left=7
+        icon.padding_right=7
+        label.padding_left=0
+        label.padding_right=0
+        background.padding_left=0
+        background.padding_right=0
+
+    --add item popup_label_template left
+    --set popup_label_template
+        icon.padding_left=0
+        icon.padding_right=0
+        label.padding_left=7
+        label.padding_right=7
+        background.padding_left=0
+        background.padding_right=0
+
+    --add item popup_template left
+    --set popup_template
+        background.padding_left=0
+        background.padding_right=0
+)
+
+#endregion
+#region LEFT ITEMS ############################################################
+
+left_items=(
+    --clone apple icon_template
+    --set apple
+        icon=
+        click_script="$PLUGIN_DIR/toggle_popup.fish"
+        background.drawing=on
+        background.color=0x00FFFFFF
+
+    --clone apple.about_this_mac popup_label_template
+    --set apple.about_this_mac
+        position=popup.apple
+        label="About This Mac"
+        click_script="$PLUGIN_DIR/apple.about_this_mac.click.fish"
+
+    --clone apple.preferences popup_label_template
+    --set apple.preferences
+        position=popup.apple
+        label="Preferences"
+        click_script="$PLUGIN_DIR/apple.preferences.click.fish"
+
+    --clone yabai_mode label_template
+    --set yabai_mode
+        update_freq=3
+        script="$PLUGIN_DIR/yabai_mode.fish"
+        click_script="$PLUGIN_DIR/yabai_mode.click.fish"
+        background.drawing=on
+    --subscribe yabai_mode
+        yabai_command_run
+        space_change
+
+    --clone skhd_mode label_template
+    --set skhd_mode
+        script="/Users/eric/bin/skhd_switched_mode default"
+        background.drawing=on
+
+    --clone space_1 space_template
+    --set space_1
+        icon=
+        icon.padding_left=7
+        background.padding_left=2
+        associated_space=1
+
+    --clone space_2 space_template
+    --set space_2
+        icon=
+        associated_space=2
+
+    --clone space_3 space_template
+    --set space_3
+        icon=
+        associated_space=3
+
+    --clone space_4 space_template
+    --set space_4
+        icon=
+        associated_space=4
+
+    --clone space_5 space_template
+    --set space_5
+        icon=
+        associated_space=5
+
+    --clone space_6 space_template
+    --set space_6
+        icon=
+        label="other"
+        background.padding_right=2
+        associated_space=6
+        icon.padding_right=2
+        label.padding_left=2
+        label.padding_right=2
+        background.padding_right=7
+
+    --add bracket spaces
+        space_1 space_2 space_3 space_4 space_5 space_6
+    --set spaces
+        background.drawing=on
+
+    --clone app_name label_template
+    --set app_name
+        label.font="$label_font:Heavy:13"
+
+    --clone window label_template
+    --set window
+        script="$PLUGIN_DIR/window.fish"
+        label.padding_left=0
+        label.padding_right=7
+        background.padding_left=0
+    --subscribe window
+        application_launched
+        application_terminated
+        application_front_switched
+        application_activated
+        application_deactivated
+        application_visible
+        application_hidden
+        window_created
+        window_destroyed
+        window_focused
+        window_moved
+        window_resized
+        window_minimized
+        window_deminimized
+        window_title_changed
+        space_change
+        yabai_command_run
+
+    --add bracket app_window
+        app_name window
+    --set app_window
+        background.drawing=on
+)
+
+#endregion
+#region CENTER ITEMS ###########################################################
+
+center_items=()
+
+#endregion
+#region RIGHT ITEMS ###########################################################
+
+right_items=(
+    --add item date_time right
+    --set date_time
+        background.drawing=on
+        update_freq=1
+        icon=
+        script="$PLUGIN_DIR/time.fish"
+
+    --add item battery right
+    --set battery
+        update_freq=10
+        script="$PLUGIN_DIR/battery.sh"
+        background.drawing=on
+
+    --clone mic icon_template
+    --set mic
+        position=right
+        update_freq=3
+        icon=
+        script="$PLUGIN_DIR/mic.fish"
+        click_script="$PLUGIN_DIR/mic.click.fish"
+        icon.padding_left=0
+        background.padding_left=0
+
+    --clone caffeinate icon_template
+    --set caffeinate
+        position=right
+        update_freq=10
+        script="$PLUGIN_DIR/caffeinate.fish"
+        click_script="$PLUGIN_DIR/caffeinate.click.fish"
+        icon.padding_left=0
+        background.padding_left=0
+
+    --clone dnd icon_template
+    --set dnd
+        position=right
+        update_freq=10
+        script="$PLUGIN_DIR/dnd.fish"
+        click_script="$PLUGIN_DIR/dnd.click.fish"
+        icon.padding_left=0
+        background.padding_left=0
+
+    --clone nextdns icon_template
+    --set nextdns
+        position=right
+        update_freq=10
+        script="$PLUGIN_DIR/nextdns.fish"
+        click_script="$PLUGIN_DIR/nextdns.click.fish"
+
+    --add bracket control
+         mic caffeinate dnd nextdns
+    --set control
+        background.drawing=on
+
+    --add item weather right
+    --set weather
+        update_freq=600
+        script="$PLUGIN_DIR/weather.fish"
+        click_script="$PLUGIN_DIR/toggle_popup.fish"
+        icon.font="$icon_font:Regular:13"
+        background.drawing=on
+
+    --clone weather.location popup_label_template
+    --set weather.location
+        position=popup.weather
+        label="Location: ..."
+
+    --clone weather.condition popup_label_template
+    --set weather.condition
+        position=popup.weather
+        label="Condition: ..."
+
+    --clone weather.feels_like popup_label_template
+    --set weather.feels_like
+        position=popup.weather
+        label="Feels Like: ..."
+
+    --clone weather.precipitation popup_label_template
+    --set weather.precipitation
+        position=popup.weather
+        label="Precipitation: ..."
+
+    --clone weather.humidity popup_label_template
+    --set weather.humidity
+        position=popup.weather
+        label="Humidity: ..."
+
+    --clone weather.wind popup_label_template
+    --set weather.wind
+        position=popup.weather
+        label="Wind: ..."
+
+    --add item spotify right
+    --set spotify
+        icon=""
+        script="$PLUGIN_DIR/spotify.fish"
+        background.drawing=on
+        label="Not playing"
+    --subscribe spotify
+        spotify_changed
+
+    --add graph cpu_total right 60
+    --set cpu_total
+        update_freq=1
+        width=0
+        icon.padding_left=0
+        icon.padding_right=0
+        label.padding_left=0
+        label.padding_right=0
+        graph.color=0xFF10A8F4
+        graph.fill_color=0xFF10A8F4
+        script="$PLUGIN_DIR/cpu_graph.fish"
+        icon.padding_right=0
+        label.padding_left=0
+
+    --add graph cpu_sys right 60
+    --set cpu_sys
+        icon.padding_left=0
+        icon.padding_right=0
+        label.padding_left=0
+        label.padding_right=0
+        graph.color=0xFFFF3A31
+        graph.fill_color=0xFFFF3A31
+        icon.padding_right=0
+        label.padding_left=0
+)
+
+#endregion
+#region FINISH SETUP ##########################################################
+
+finish_setup=(
+    --set space_template
+        drawing=off
+
+    --set icon_template
+        drawing=off
+
+    --set label_template
+        drawing=off
+
+    --set popup_icon_template
+        drawing=off
+
+    --set popup_label_template
+        drawing=off
+
+    --set popup_template
+        drawing=off
+
+    --update
+)
+
+sketchybar $config[@] \
+    $events[@] \
+    $templates[@] \
+    $left_items[@] \
+    $center_items[@] \
+    $right_items[@] \
+    $finish_setup[@]
+/Users/eric/.config/yabai/scripts/yabai_switch_mode
+
+sleep 0.5
+
+sketchybar --animate tanh 30 --bar y_offset=0
+
+#endregion
+
+echo "sketchybar configuration loaded.."
