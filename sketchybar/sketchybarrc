@@ -8,12 +8,13 @@ UTIL_DIR="/Users/eric/.config/sketchybar/util"
 #endregion
 #region CONFIG ################################################################
 
-bar_color=0xFF451093
+bar_color=0x00000000
 popup_color=0xFF451093
-border_color=0x30FFFFFF
+border_color=0x40FFFFFF
 highlight_color=0xFF7FE5F0
 label_color=0xFFFFFFFF
 icon_color=0xFFFFFFFF
+item_color=0x30FFFFFF
 
 shadow_angle=45
 shadow_distance=5
@@ -38,16 +39,17 @@ config=(
         position=top
         padding_left=5
         padding_right=5
-        blur_radius=1000
+        blur_radius=0
         corner_radius=10
         topmost=off
         hidden=off
-        color=0x00000000 # $bar_color
+        color=$bar_color
         image.drawing=off
         font_smoothing=on
         shadow=on
 
     --default
+        blur_radius=20
         icon.font="$icon_font:Regular:14"
         icon.color=$icon_color
         icon.highlight_color=$highlight_color
@@ -71,7 +73,7 @@ config=(
         background.padding_left=$background_side_padding
         background.padding_right=$background_side_padding
         background.height=$background_height
-        background.color=0x30FFFFFF # $bar_color
+        background.color=$item_color
         background.border_color=$border_color
         background.border_width=$background_border_width
         background.drawing=off
@@ -142,8 +144,8 @@ templates=(
         associated_display=1
         script="$PLUGIN_DIR/space.fish"
         click_script="$PLUGIN_DIR/space.click.fish"
-        icon.padding_left=1
-        icon.padding_right=1
+        icon.padding_left=0
+        icon.padding_right=0
         label.padding_left=0
         label.padding_right=0
         background.padding_left=0
