@@ -2,8 +2,8 @@
 
 #region SETUP #################################################################
 
-PLUGIN_DIR="/Users/eric/.config/sketchybar/plugins"
-UTIL_DIR="/Users/eric/.config/sketchybar/util"
+PLUGIN_DIR="$HOME/.config/sketchybar/plugins"
+UTIL_DIR="$HOME/.config/sketchybar/util"
 
 #endregion
 #region CONFIG ################################################################
@@ -223,7 +223,7 @@ left_items=(
 
     --clone skhd_mode label_template
     --set skhd_mode
-        script="/Users/eric/bin/skhd_switched_mode default"
+        script="$HOME/bin/skhd_switched_mode default"
         background.drawing=on
 
     --clone space_1 space_template
@@ -475,7 +475,7 @@ sketchybar $config[@] \
     $center_items[@] \
     $right_items[@] \
     $finish_setup[@]
-/Users/eric/.config/yabai/scripts/yabai_switch_mode
+$HOME/.config/yabai/scripts/yabai_switch_mode
 
 #endregion
 
